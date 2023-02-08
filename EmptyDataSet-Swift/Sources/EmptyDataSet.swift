@@ -263,7 +263,11 @@ extension UIScrollView: UIGestureRecognizerDelegate {
                 
                 if view.superview == nil {
                     // Send the view all the way to the back, in case a header and/or footer is present, as well as for sectionHeaders or any other content
-                    if (self is UITableView) || (self is UICollectionView) || (subviews.count > 1) {
+                    var insertToFront = false
+                    if let flag = emptyDataSetSource?.insertToFront(forEmptyDataSet: self) {
+                        insertToFront = flag
+                    }
+                    if ((self is UITableView) || (self is UICollectionView) || (subviews.count > 1)) && !insertToFront {
                         insertSubview(view, at: 0)
                     } else {
                         addSubview(view)

@@ -99,6 +99,7 @@ public protocol EmptyDataSetSource {
     /// - Returns: The space height between elements.
     func spaceHeight(forEmptyDataSet scrollView: UIScrollView) -> CGFloat
 
+    func insertToFront(forEmptyDataSet scrollView: UIScrollView) -> Bool
 }
 
 public extension EmptyDataSetSource {
@@ -149,5 +150,9 @@ public extension EmptyDataSetSource {
  
     func spaceHeight(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
         return 11
+    }
+    
+    func insertToFront(forEmptyDataSet scrollView: UIScrollView) -> Bool {
+        false
     }
 }
