@@ -23,6 +23,7 @@ private var kEmptyDataSetDelegate =         "emptyDataSetDelegate"
 private var kEmptyDataSetView =             "emptyDataSetView"
 private var kConfigureEmptyDataSetView =    "configureEmptyDataSetView"
 private var kOldScrollEnabled =             "kOldScrollEnabled"
+private var kSetScrollEnabled =             "kSetScrollEnabled"
 
 extension UIScrollView: UIGestureRecognizerDelegate {
     
@@ -88,8 +89,18 @@ extension UIScrollView: UIGestureRecognizerDelegate {
         set {
             objc_setAssociatedObject(self, &kOldScrollEnabled, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
-        
-        
+    }
+    
+    public var isSetScrollEnabled: Bool {
+        get {
+            if let enabled = objc_getAssociatedObject(self, &kSetScrollEnabled) as? Bool {
+                return enabled
+            }
+            return false
+        }
+        set {
+            objc_setAssociatedObject(self, &kSetScrollEnabled, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
     
     //MARK: - privateProperty
@@ -344,6 +355,7 @@ extension UIScrollView: UIGestureRecognizerDelegate {
                 view.isUserInteractionEnabled = isTouchAllowed
                 
                 // Configure scroll permission
+                self.isSetScrollEnabled = true
                 self.isOldScrollEnabled = self.isScrollEnabled
                 self.isScrollEnabled = isScrollAllowed
                 
@@ -379,7 +391,12 @@ extension UIScrollView: UIGestureRecognizerDelegate {
 //            view.removeFromSuperview()
 //            emptyDataSetView = nil
         }
-        self.isScrollEnabled = self.isOldScrollEnabled
+        if isSetScrollEnabled {
+            isScrollEnabled = self.isOldScrollEnabled
+        } else {
+            isSetScrollEnabled = true
+            isOldScrollEnabled = isScrollEnabled
+        }
         didDisappear()
     }
     
@@ -432,6 +449,7 @@ extension UIScrollView: UIGestureRecognizerDelegate {
         swizzleMethod(for: UITableView.self, originalSelector: originalSelector, swizzledSelector: swizzledSelector)
     }()
 }
+
 
 
 
