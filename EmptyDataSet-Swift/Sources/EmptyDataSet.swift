@@ -22,6 +22,7 @@ private var kEmptyDataSetSource =           "emptyDataSetSource"
 private var kEmptyDataSetDelegate =         "emptyDataSetDelegate"
 private var kEmptyDataSetView =             "emptyDataSetView"
 private var kConfigureEmptyDataSetView =    "configureEmptyDataSetView"
+private var kOldScrollEnabled =             "kOldScrollEnabled"
 
 extension UIScrollView: UIGestureRecognizerDelegate {
     
@@ -75,6 +76,20 @@ extension UIScrollView: UIGestureRecognizerDelegate {
             return !view.isHidden
         }
         return false
+    }
+    
+    public var isOldScrollEnabled: Bool {
+        get {
+            if let enabled = objc_getAssociatedObject(self, &kOldScrollEnabled) as? Bool {
+                return enabled
+            }
+            return true
+        }
+        set {
+            objc_setAssociatedObject(self, &kOldScrollEnabled, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+        
+        
     }
     
     //MARK: - privateProperty
@@ -329,6 +344,7 @@ extension UIScrollView: UIGestureRecognizerDelegate {
                 view.isUserInteractionEnabled = isTouchAllowed
                 
                 // Configure scroll permission
+                self.isOldScrollEnabled = self.isScrollEnabled
                 self.isScrollEnabled = isScrollAllowed
                 
                 // Configure image view animation
@@ -363,7 +379,7 @@ extension UIScrollView: UIGestureRecognizerDelegate {
 //            view.removeFromSuperview()
 //            emptyDataSetView = nil
         }
-        self.isScrollEnabled = true
+        self.isScrollEnabled = self.isOldScrollEnabled
         didDisappear()
     }
     
